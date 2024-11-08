@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5v5 Game Interface</title>
+  <style>
+    /* Basic reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1f1f1f;
+      color: #f0f0f0;
+    }
+
+    /* Header with large buttons */
+    .header {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: #111;
+      border-bottom: 2px solid #333;
+      height: 80px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 10;
+    }
+
+    .tab {
+      cursor: pointer;
+      padding: 20px 40px;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #888;
+      transition: color 0.3s, background-color 0.3s;
+    }
+
+    .tab:hover {
+      color: #f0f0f0;
+    }
+
+    .tab.active {
+      color: #fff;
+      background-color: #333;
+      border-bottom: 4px solid #e94e77;
+    }
+
+    /* Main container */
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: #2d2d2d;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      padding-top: 100px;
+      /* Offset for fixed header */
+      margin: 0 auto;
+    }
+
+    /* Content Area */
+    .content {
+      display: none;
+      padding: 20px;
+      background-color: #2d2d2d;
+      color: #f0f0f0;
+    }
+
+    .content.active {
+      display: block;
+    }
+
+    /* Play tab styles */
+    .team-select {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .team-select select, .start-btn {
+      width: 48%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #444;
+      color: #f0f0f0;
+    }
+
+    .start-btn {
+      background-color: #e94e77;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .start-btn:hover {
+      background-color: #d63e63;
+    }
+
+    /* Stats tab styles */
+    .stats-select {
+      margin-bottom: 15px;
+    }
+
+    .stats-select select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #444;
+      color: #f0f0f0;
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .stats-table th, .stats-table td {
+      border: 1px solid #555;
+      padding: 10px;
+      text-align: center;
+      color: #f0f0f0;
+    }
+
+    .stats-table th {
+      background-color: #333;
+    }
+
+    /* Rank tab styles */
+    .rank-info {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .rank-info h3 {
+      color: #e94e77;
+    }
+
+    .rank-info p {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header with Navigation Tabs -->
+<div class="header">
+  <div class="tab active" onclick="showTab('play')">PLAY</div>
+  <div class="tab" onclick="showTab('stats')">STATS</div>
+  <div class="tab" onclick="showTab('rank')">RANK</div>
+</div>
+
+<div class="container">
+  <!-- Play Content -->
+  <div id="play" class="content active">
+    <h2>Select Teams</h2>
+    <div class="team-select">
+      <select id="team1">
+        <option value="" disabled selected>Select Team 1</option>
+        <option value="Team A">Team A</option>
+        <option value="Team B">Team B</option>
+        <option value="Team C">Team C</option>
+        <option value="Team D">Team D</option>
+      </select>
+      <select id="team2">
+        <option value="" disabled selected>Select Team 2</option>
+        <option value="Team A">Team A</option>
+        <option value="Team B">Team B</option>
+        <option value="Team C">Team C</option>
+        <option value="Team D">Team D</option>
+      </select>
+    </div>
+    <button class="start-btn" onclick="startMatch()">Start Match</button>
+  </div>
+
+  <!-- Stats Content -->
+  <div id="stats" class="content">
+    <h2>Player Stats</h2>
+    <div class="stats-select">
+      <select id="playerSelect" onchange="showPlayerStats()">
+        <option value="" disabled selected>Select Player</option>
+        <option value="Player 1">Player 1</option>
+        <option value="Player 2">Player 2</option>
+        <option value="Player 3">Player 3</option>
+        <option value="Player 4">Player 4</option>
+        <option value="Player 5">Player 5</option>
+      </select>
+    </div>
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Matches Played</th>
+          <th>Kills</th>
+          <th>Deaths</th>
+          <th>Assists</th>
+        </tr>
+      </thead>
+      <tbody id="playerStats">
+        <tr>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Rank Content -->
+  <div id="rank" class="content">
+    <h2>Your Rank</h2>
+    <div class="rank-info">
+      <h3 id="rankName">-</h3>
+      <p>Experience Points: <span id="experiencePoints">-</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(tabName) {
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+    document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+    document.getElementById(tabName).classList.add('active');
+  }
+
+  function startMatch() {
+    const team1 = document.getElementById('team1').value;
+    const team2 = document.getElementById('team2').value;
+    if (team1 && team2 && team1 !== team2) {
+      alert(`Match started between ${team1} and ${team2}`);
+    } else {
+      alert("Please select two different teams.");
+    }
+  }
+
+  function showPlayerStats() {
+    const playerStats = {
+      'Player 1': { matches: 20, kills: 50, deaths: 30, assists: 40 },
+      'Player 2': { matches: 25, kills: 70, deaths: 40, assists: 60 },
+      'Player 3': { matches: 15, kills: 40, deaths: 20, assists: 30 },
+      'Player 4': { matches: 18, kills: 55, deaths: 35, assists: 45 },
+      'Player 5': { matches: 22, kills: 65, deaths: 45, assists: 55 }
+    };
+    
+    const player = document.getElementById('playerSelect').value;
+    const stats = playerStats[player];
+    const tbody = document.getElementById('playerStats');
+    
+    tbody.innerHTML = `
+      <tr>
+        <td>${stats.matches}</td>
+        <td>${stats.kills}</td>
+        <td>${stats.deaths}</td>
+        <td>${stats.assists}</td>
+      </tr>
+    `;
+  }
+
+  // Show Rank and Experience Points
+  function showRank() {
+    const rankInfo = {
+      rank: 'Gold',
+      experience: 1250
+    };
+    
+    document.getElementById('rankName').textContent = rankInfo.rank;
+    document.getElementById('experiencePoints').textContent = rankInfo.experience;
+  }
+
+  // Initialize Rank content on page load
+  document.addEventListener('DOMContentLoaded', showRank);
+</script>
+
+</body>
+</html>
