@@ -1,0 +1,19 @@
+CREATE TABLE Team_PlayerTable(
+Team_ID INT NOT NULL
+Player_ID INT NOT NULL
+);
+
+CREATE TABLE Game_StatsTable(
+Player_ID INT NOT NULL
+Match_id INT NOT NULL
+Kills INT 
+Deaths INT 
+Assists INT
+);
+
+CREATE TABLE RankTable(
+Rank_ID INT PRIMARY KEY
+Rank_Name VARCHAR
+Min_Experience INT
+Max_Experience INT
+);
