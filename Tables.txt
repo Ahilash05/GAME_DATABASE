@@ -1,20 +1,92 @@
-CREATE TABLE Team_PlayerTable(
-Team_ID INT NOT NULL
-Player_ID INT NOT NULL
+-- Player Table
+CREATE TABLE Player (
+    Player_ID SERIAL,
+    Player_Name VARCHAR(50),
+    Experience INT,
+    Rank_ID INT,
+    Team_ID INT
 );
 
-CREATE TABLE Game_StatsTable(
-Player_ID INT NOT NULL
-Match_id INT NOT NULL
-Kills INT 
-Deaths INT 
-Assists INT
+-- Team Table
+CREATE TABLE Team (
+    Team_ID SERIAL,
+    Team_Name VARCHAR(50),
+    Team_Creation DATE,
+    Region VARCHAR(50)
 );
 
-CREATE TABLE RankTable(
-Rank_ID INT PRIMARY KEY
-Rank_Name VARCHAR
-Min_Experience INT
-Max_Experience INT
+-- Match Table
+CREATE TABLE Match (
+    Match_ID SERIAL,
+    Match_Date DATE,
+    Duration TIME,
+    Winning_Team_ID INT,
+    Losing_Team_ID INT
 );
-NAVEEN IS GOAT
+
+-- Team_Player Table (Join Table)
+CREATE TABLE Team_Player (
+    Team_ID INT,
+    Player_ID INT
+);
+
+-- Game Stats Table
+CREATE TABLE Game_Stats (
+    Player_ID INT,
+    Match_ID INT,
+    Kills INT,
+    Deaths INT,
+    Assists INT
+);
+
+-- Rank Table
+CREATE TABLE Rank (
+    Rank_ID SERIAL,
+    Rank_Name VARCHAR(50),
+    Min_Experience INT,
+    Max_Experience INT
+);
+-- Primary Key Constraints
+ALTER TABLE Player
+    ADD CONSTRAINT pk_player PRIMARY KEY (Player_ID);
+
+ALTER TABLE Team
+    ADD CONSTRAINT pk_team PRIMARY KEY (Team_ID);
+
+ALTER TABLE Match
+    ADD CONSTRAINT pk_match PRIMARY KEY (Match_ID);
+
+ALTER TABLE Team_Player
+    ADD CONSTRAINT pk_team_player PRIMARY KEY (Team_ID, Player_ID);
+
+ALTER TABLE Game_Stats
+    ADD CONSTRAINT pk_game_stats PRIMARY KEY (Player_ID, Match_ID);
+
+ALTER TABLE Rank
+    ADD CONSTRAINT pk_rank PRIMARY KEY (Rank_ID);
+
+-- Foreign Key Constraints
+ALTER TABLE Player
+    ADD CONSTRAINT fk_player_rank FOREIGN KEY (Rank_ID) REFERENCES Rank (Rank_ID);
+
+ALTER TABLE Player
+    ADD CONSTRAINT fk_player_team FOREIGN KEY (Team_ID) REFERENCES Team (Team_ID);
+
+ALTER TABLE Match
+    ADD CONSTRAINT fk_match_winning_team FOREIGN KEY (Winning_Team_ID) REFERENCES Team (Team_ID);
+
+ALTER TABLE Match
+    ADD CONSTRAINT fk_match_losing_team FOREIGN KEY (Losing_Team_ID) REFERENCES Team (Team_ID);
+
+ALTER TABLE Team_Player
+    ADD CONSTRAINT fk_team_player_team FOREIGN KEY (Team_ID) REFERENCES Team (Team_ID);
+
+ALTER TABLE Team_Player
+    ADD CONSTRAINT fk_team_player_player FOREIGN KEY (Player_ID) REFERENCES Player (Player_ID);
+
+ALTER TABLE Game_Stats
+    ADD CONSTRAINT fk_game_stats_player FOREIGN KEY (Player_ID) REFERENCES Player (Player_ID);
+
+ALTER TABLE Game_Stats
+    ADD CONSTRAINT fk_game_stats_match FOREIGN KEY (Match_ID) REFERENCES Match (Match_ID);
+
