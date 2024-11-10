@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- Player Table
 CREATE TABLE Player (
     Player_ID SERIAL,
@@ -90,3 +91,53 @@ ALTER TABLE Game_Stats
 ALTER TABLE Game_Stats
     ADD CONSTRAINT fk_game_stats_match FOREIGN KEY (Match_ID) REFERENCES Match (Match_ID);
 
+=======
+CREATE TABLE players (
+    player_id INT NOT NULL,  \\ Primary Key
+    player_name VARCHAR, 
+    experience INT,   
+    rank_id INT NOT NULL,  \\ Foreign key Rank_id            
+    team_id INT,          \\ Foreign key team_id                 
+         
+);
+
+CREATE TABLE Team(
+
+	Team_id INT NOT NULL, \\ Primary key
+	Team_name VARCHAR,
+	Team_Creation DATE,
+	Region VARCHAR(50)
+
+);
+
+CREATE TABLE Match(
+
+	Match_id INT NOT NULL, \\Primary Key
+	Match_Date DATE,
+	Duration INTERVAL,
+	Winning_team_id INT, \\ FOREIGN KEY REFERENCE Team_id
+	Losing_team_id INT \\FOREIGN KEY REFERENCE Team_id
+
+);
+
+CREATE TABLE Team_PlayerTable(
+Team_ID INT NOT NULL \\ FOREIGN KEY REFERENCE Team_id
+Player_ID INT NOT NULL \\ FOREIGN KEY REFERENCE Player_id
+);
+
+CREATE TABLE Game_StatsTable(
+Player_ID INT NOT NULL \\ FOREIGN KEY REFERENCE Player_id
+Match_id INT NOT NULL \\ FOREIGN KEY REFERENCE Match_id
+Kills INT \\ Check constraint >=0
+Deaths INT \\ Check constraint >=0
+Assists INT \\ Check constraint >=0
+);
+
+CREATE TABLE RankTable(
+Rank_ID INT PRIMARY KEY
+Rank_Name VARCHAR \\ Check constraint name is in any 3(either bronze ,silver or gold)
+Min_Experience INT
+Max_Experience INT
+);
+
+>>>>>>> 1b17b8a7e5b6e935bdd5568fafd06f41faab7624
