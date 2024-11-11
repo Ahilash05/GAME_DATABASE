@@ -11,13 +11,11 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: Arial, sans-serif;
       background-color: #1f1f1f;
       color: #f0f0f0;
     }
-
     /* Header with large buttons */
     .header {
       display: flex;
@@ -31,7 +29,6 @@
       top: 0;
       z-index: 10;
     }
-
     .tab {
       cursor: pointer;
       padding: 20px 40px;
@@ -40,17 +37,14 @@
       color: #888;
       transition: color 0.3s, background-color 0.3s;
     }
-
     .tab:hover {
       color: #f0f0f0;
     }
-
     .tab.active {
       color: #fff;
       background-color: #333;
       border-bottom: 4px solid #e94e77;
     }
-
     /* Main container */
     .container {
       width: 90%;
@@ -63,7 +57,6 @@
       /* Offset for fixed header */
       margin: 0 auto;
     }
-
     /* Content Area */
     .content {
       display: none;
@@ -71,18 +64,15 @@
       background-color: #2d2d2d;
       color: #f0f0f0;
     }
-
     .content.active {
       display: block;
     }
-
     /* Play tab styles */
     .team-select {
       display: flex;
       justify-content: space-between;
       margin-bottom: 15px;
     }
-
     .team-select select, .start-btn {
       width: 48%;
       padding: 10px;
@@ -91,23 +81,19 @@
       background-color: #444;
       color: #f0f0f0;
     }
-
     .start-btn {
       background-color: #e94e77;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
     .start-btn:hover {
       background-color: #d63e63;
     }
-
     /* Stats tab styles */
     .stats-select {
       margin-bottom: 15px;
     }
-
     .stats-select select {
       width: 100%;
       padding: 10px;
@@ -116,37 +102,43 @@
       background-color: #444;
       color: #f0f0f0;
     }
-
     .stats-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
-
     .stats-table th, .stats-table td {
       border: 1px solid #555;
       padding: 10px;
       text-align: center;
       color: #f0f0f0;
     }
-
     .stats-table th {
       background-color: #333;
     }
-
     /* Rank tab styles */
     .rank-info {
       text-align: center;
-      margin -top: 20px;
+      margin-top: 20px;
     }
-
     .rank-info h3 {
       color: #e94e77;
     }
-
     .rank-info p {
       font-size: 1.2em;
       margin: 10px 0;
+    }
+    #showrankbtn{
+      background-color: #e94e77;
+      color:whitesmoke;
+      font-weight: bolder;
+      font-weight: bold;
+      font-size: larger;
+      padding: 10px;
+      border-radius: 70px;
+    }
+    #btncontainer{
+      text-align: center;
     }
   </style>
 </head>
@@ -217,6 +209,9 @@
 
   <!-- Rank Content -->
   <div id="rank" class="content">
+    <div id="btncontainer">
+    <button onclick="showPlayerRank()" id="showrankbtn">Show Rank</button>
+  </div>
     <h2>Your Rank</h2>
     <div class="rank-info">
       <h3 id="rankName">-</h3>
@@ -236,15 +231,15 @@
   async function startMatch() {
     const team1 = document.getElementById('team1').value;
     const team2 = document.getElementById('team2').value;
-    
+
     if (team1 && team2 && team1 !== team2) {
       try {
-        const response = await fetch('/api/match/start', {
+        const response = await fetch('http://localhost:3000/api/match/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ team1, team2 }),
         });
-        
+
         const data = await response.json();
         alert(data.message);
       } catch (error) {
@@ -258,11 +253,11 @@
   async function showPlayerStats() {
     const player = document.getElementById('playerSelect').value;
     if (!player) return;
-    
+
     try {
-      const response = await fetch(`/playerStats?player=${player}`);
+      const response = await fetch(`http://localhost:3000/playerStats?player=${player}`);
       const stats = await response.json();
-      document.getElementBy 'playerStats').innerHTML = `
+      document.getElementById('playerStats').innerHTML = `
         <tr>
           <td>${stats.matches || '-'}</td>
           <td>${stats.kills || '-'}</td>
@@ -270,24 +265,34 @@
           <td>${stats.assists || '-'}</td>
         </tr>
       `;
-      showRank(); // Call showRank to display the player's rank
     } catch (error) {
       console.error('Error fetching player stats:', error);
     }
   }
+  async function showPlayerRank() {
+  const player = document.getElementById('playerSelect').value;
+  
+  if (!player) return;
 
-  async function showRank() {
-    const player = document.getElementById('playerSelect').value;
-    if (!player) return;
-    try {
-      const response = await fetch(`/playerRank?player=${player}`);
-      const rankInfo = await response.json();
-      document.getElementById('rankName').textContent = rankInfo.rank || '-';
-      document.getElementById('experiencePoints').textContent = rankInfo.experience || '-';
-    } catch (error) {
-      console.error('Error fetching rank:', error);
-    }
+  try {
+    console.log(player);
+    const response = await fetch(`http://localhost:3000/playerRank?player=${encodeURIComponent(player)}`);
+    const rankInfo = await response.json();
+
+    console.log(rankInfo.rank);
+    console.log(rankInfo.max_experience);
+    document.getElementById('rankName').textContent = rankInfo.rank;
+    
+    // If experience is available, display it; otherwise, show 0
+    document.getElementById('experiencePoints').innerHTML = rankInfo.max_experience;
+    
+  } catch (error) {
+    console.error('Error fetching player rank:', error);
+    alert('Failed to fetch player rank. Please try again later.');
   }
+}
+
+
 </script>
 
 </body>

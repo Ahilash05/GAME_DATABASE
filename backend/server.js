@@ -1,7 +1,11 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const { Pool } = require('pg');
+
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -67,17 +71,25 @@ app.get('/playerStats', async (req, res) => {
 app.get('/playerRank', async (req, res) => {
   const player = req.query.player;
   try {
+    console.log(player);
     const rankInfo = await pool.query(`
-      SELECT r.Rank_Name, p.Experience
+      SELECT r.rank_name, r.max_experience
       FROM Player p
       JOIN Rank r ON p.Rank_ID = r.Rank_ID
-      WHERE p.Player_Name = $1`, 
-      [player]);
+      WHERE p.Player_Name = $1;
+    `, 
+    [player]);
     
-    res.json(rankInfo.rows[0] || { rank: 'Unranked', experience: 0 });
+    if (rankInfo.rows.length !== 0) {
+      res.json({ rank: rankInfo.rows[0].rank_name, max_experience: rankInfo.rows[0].max_experience });
+    } else {
+      res.json({ rank: 'Unranked' }); // Or you could omit this key entirely if you prefer
+    }
   } catch (error) {
     console.error('Error fetching player rank:', error);
     res.status(500).json({ message: 'An error occurred while fetching player rank.' });
   }
 });
+
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
