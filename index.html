@@ -255,6 +255,7 @@
     if (!player) return;
 
     try {
+      
       const response = await fetch(`http://localhost:3000/playerStats?player=${player}`);
       const stats = await response.json();
       document.getElementById('playerStats').innerHTML = `

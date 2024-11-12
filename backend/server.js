@@ -54,14 +54,51 @@ app.post('/api/match/start', async (req, res) => {
        VALUES (CURRENT_DATE, $1, $2, $3) RETURNING match_id`,
       [duration, winningTeam, losingTeam]
     );
-
     const matchId = matchResult.rows[0].match_id;
-    res.status(200).json({ message: `Match started between ${team1} and  ${team2}`, matchId });
+    console.log(matchId);
+    console.log(matchId);
+    console.log("Match successfully started with ID:", matchId);
+
+    // Get players from team_players table for each team
+    const playersTeam1 = await pool.query(`SELECT player_id FROM team_player WHERE team_id = $1`, [winningTeam]);
+    const playersTeam2 = await pool.query(`SELECT player_id FROM team_player WHERE team_id = $1`, [losingTeam]);
+
+    // Function to generate random stats
+    const generateStats = () => {
+      return {
+        kills: Math.floor(Math.random() * 10),
+        deaths: Math.floor(Math.random() * 10),
+        assists: Math.floor(Math.random() * 10)
+      };
+    };
+
+    // Insert stats for each player in team 1
+    for (const player of playersTeam1.rows) {
+      const stats = generateStats();
+      await pool.query(
+        `INSERT INTO game_stats (match_id, player_id, kills, deaths, assists) 
+         VALUES ($1, $2, $3, $4, $5)`,
+        [matchId, player.player_id, stats.kills, stats.deaths, stats.assists]
+      );
+    }
+
+    // Insert stats for each player in team 2
+    for (const player of playersTeam2.rows) {
+      const stats = generateStats();
+      await pool.query(
+        `INSERT INTO game_stats (match_id, player_id, kills, deaths, assists) 
+         VALUES ($1, $2, $3, $4, $5)`,
+        [matchId, player.player_id, stats.kills, stats.deaths, stats.assists]
+      );
+    }
+
+    res.status(200).json({ message: `Match started between Team ${team1} and Team ${team2}`, matchId });
   } catch (error) {
     console.error("Error starting match:", error);
     res.status(500).json({ message: "An error occurred while starting the match" });
   }
 });
+
 
 
 // Player Stats Endpoint
