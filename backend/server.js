@@ -21,29 +21,48 @@ const pool = new Pool({
 app.post('/api/match/start', async (req, res) => {
   try {
     const { team1, team2 } = req.body;
+    console.log("Request body:", req.body);
+
     if (!team1 || !team2 || team1 === team2) {
       return res.status(400).json({ message: "Select two different teams" });
     }
 
-    // Random match duration and winning/losing team
+    // Generate random match duration
     const duration = `00:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
-    const winningTeam = Math.random() > 0.5 ? team1 : team2;
-    const losingTeam = winningTeam === team1 ? team2 : team1;
+    console.log("Generated match duration:", duration);
+
+    // Retrieve team IDs from the database
+    const team1Result = await pool.query(`SELECT team_id FROM team WHERE team_name = $1`, [team1]);
+    const team2Result = await pool.query(`SELECT team_id FROM team WHERE team_name = $1`, [team2]);
+
+    if (team1Result.rows.length === 0 || team2Result.rows.length === 0) {
+      return res.status(400).json({ message: "One or both teams not found" });
+    }
+
+    const teamId1 = team1Result.rows[0].team_id;
+    const teamId2 = team2Result.rows[0].team_id;
+
+    // Randomly select the winning and losing teams
+    const winningTeam = Math.random() > 0.5 ? teamId1 : teamId2;
+    const losingTeam = winningTeam === teamId1 ? teamId2 : teamId1;
+    console.log("Winning team ID:", winningTeam);
+    console.log("Losing team ID:", losingTeam);
 
     // Insert match result into the database
     const matchResult = await pool.query(
-      `INSERT INTO Match (Match_Date, Duration, Winning_Team_ID, Losing_Team_ID)
-       VALUES (CURRENT_DATE, $1, $2, $3) RETURNING Match_ID`,
+      `INSERT INTO Match (match_date, duration, winning_team_id, losing_team_id)
+       VALUES (CURRENT_DATE, $1, $2, $3) RETURNING match_id`,
       [duration, winningTeam, losingTeam]
     );
 
     const matchId = matchResult.rows[0].match_id;
-    res.status(200).json({ message: `Match started between Team ${team1} and Team ${team2}`, matchId });
+    res.status(200).json({ message: `Match started between ${team1} and  ${team2}`, matchId });
   } catch (error) {
     console.error("Error starting match:", error);
     res.status(500).json({ message: "An error occurred while starting the match" });
   }
 });
+
 
 // Player Stats Endpoint
 app.get('/playerStats', async (req, res) => {
