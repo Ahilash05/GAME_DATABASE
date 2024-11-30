@@ -92,7 +92,7 @@ app.post('/api/match/start', async (req, res) => {
       );
     }
 
-    res.status(200).json({ message: `Match started between Team ${team1} and Team ${team2}`, matchId });
+    res.status(200).json({ message: `Match started between  ${team1} and  ${team2}`, matchId });
   } catch (error) {
     console.error("Error starting match:", error);
     res.status(500).json({ message: "An error occurred while starting the match" });
@@ -138,7 +138,11 @@ app.get('/get-kd-ratio', async (req, res) => {
   }
 });
 
-
+app.post("/add", async (req, res) => {
+  const { player_id, player_name, experience, rank_id, team_id } = req.body;
+ const result = await pool.query(`CALL add_player($1, $2, $3, $4, $5)`, [player_id, player_name, experience, rank_id, team_id])
+ res.status(200).json({ message: "Player added successfully!" });
+});
 
 // Player Stats Endpoint
 app.get('/playerStats', async (req, res) => {
@@ -161,7 +165,17 @@ app.get('/playerStats', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while fetching player stats.' });
   }
 });
-
+app.get('/last5', async (req, res) => {
+  try {
+      const result = await pool.query(
+          'SELECT * FROM Match ORDER BY Match_Date DESC LIMIT 5'
+      );
+      res.json(result.rows); // Send back the match data as a JSON response
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch last 5 matches' });
+  }
+});
 // Player Rank Endpoint
 app.get('/playerRank', async (req, res) => {
   const player = req.query.player;

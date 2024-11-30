@@ -191,6 +191,7 @@
       background-color: #d63e63;
       transform: scale(1.1);
     }
+    
     #btncontainer {
       text-align: center;
     }
@@ -225,6 +226,128 @@
       transform: translateY(4px);
       box-shadow: 0 2px 0 #cc3300, 0 4px 0 #cc3300, 0 6px 0 #cc3300;
     }
+    .add-player-form input,
+    .add-player-form select,
+    .add-player-form button {
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #444;
+      color: #f0f0f0;
+      font-size: 1em;
+    }
+    .add-player-form button {
+      background-color: #e94e77;
+      font-weight: bold;
+      cursor: pointer;
+      color: rgb(255, 255, 255);
+      transition: background-color 0.3s;
+    }
+    .add-player-form button:hover {
+      background-color: #f9f9f9;
+      color: black;
+    }
+    /* Adjust other styles as needed */
+    .retro-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+      background: #ff4d4d;
+      border: 3px solid #ffcc00;
+      border-radius: 8px;
+      box-shadow: 0 4px 0 #cc3300, 0 8px 0 #cc3300, 0 12px 0 #cc3300;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease-in-out;
+    }
+    .add-player-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    h3 {  
+          padding-top: 50px;
+          font-size: 30px;
+          text-align: center;
+            color: #ffffff; /* Neon pink header */
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000, 0 0 25px #881346, 0 0 5px #a42a53; /* Glowing neon text */
+        }
+
+        #matches-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .match-item {
+            background-color: #ff3b83; /* Dark background for match items */
+            border: 2px solid #5b03ff; /* Neon green borders */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 20px;
+            box-shadow: 0 0 10px #ff00ff, 0 0 5px #00ff00;
+            font-size: 20px;
+            color: #ffffff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .match-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff00ff, 0 0 10px #00ff00;
+        }
+
+        .match-item p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .match-item span {
+            font-weight: bold;
+            color: #ff00ff; /* Neon pink for important details */
+        }
+
+        .match-item .match-id {
+            font-size: 18px;
+        }
+
+        .match-item .match-date,
+        .match-item .duration,
+        .match-item .teams {
+            font-size: 14px;
+        }
+
+        /* Add retro pixelated border animation */
+        .match-item {
+            border: 2px solid #ffffff;
+            position: relative;
+        }
+
+        .match-item:before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px dashed #ffffff;
+            z-index: -1;
+            animation: borderAnimation 1s linear infinite;
+        }
+
+        @keyframes borderAnimation {
+            0% {
+                border-color: #ff00ff;
+            }
+            50% {
+                border-color: #4247b8;
+            }
+            100% {
+                border-color: #0048ff;
+            }
+        }
   </style>
   
 </head>
@@ -235,6 +358,7 @@
   <div class="tab active" onclick="showTab('play')">PLAY</div>
   <div class="tab" onclick="showTab('stats')">STATS</div>
   <div class="tab" onclick="showTab('rank')">RANK</div>
+  <div class="tab" onclick="showTab('player')">ADD PLAYER</div>
 </div>
 
 <div class="container">
@@ -308,6 +432,8 @@
         </tr>
       </tbody>
     </table>
+    <h3>Last 5 Matches</h3>
+    <ul id="matches-list"></ul>
   </div>
 
   <!-- Rank Content -->
@@ -315,11 +441,22 @@
     <div id="btncontainer">
     <button onclick="showPlayerRank()" id="showrankbtn">Show Rank</button>
   </div>
-    <h2>Your Rank</h2>
+    <h2>Rank of <span id ="prank"></span></h2>
     <div class="rank-info">
       <h3 id="rankName">-</h3>
       <p>Experience Points: <span id="experiencePoints">-</span></p>
     </div>
+  </div>
+  <div id="player" class="content">
+    <h2>Add Player</h2>
+    <form class="add-player-form" onsubmit="addPlayer(event)">
+      <input type="text" id="playerName" placeholder="Enter Player Name" required>
+      <input type="number" id="pid" placeholder="Enter Player ID" required>
+      <input type="number" id="teamid" placeholder="Enter Team ID" required>
+      <input type="number" id="rankid" placeholder="Enter Rank ID" required>
+      <input type="number" id="experience" placeholder="Enter Experience" required>
+      <button type="submit" id="addplayerbtn" onclick="addplayer()">Add Player</button>
+    </form>
   </div>
 </div>
 
@@ -378,7 +515,52 @@
     }
 }
   
+async function addPlayer(event) {
+    event.preventDefault(); // Prevent form from submitting the default way
 
+    // Get the input values
+    const pname = document.getElementById("playerName").value;
+    const pid = document.getElementById("pid").value;
+    const tid = document.getElementById("teamid").value;
+    const rid = document.getElementById("rankid").value;
+    const experience = document.getElementById("experience").value;
+
+    // Validate input fields
+    if (!pname || !pid || !experience || !rid || !tid) {
+        alert("Please fill out all fields correctly.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                player_id: parseInt(pid),
+                player_name: pname,
+                experience: parseInt(experience),
+                rank_id: parseInt(rid),
+                team_id: parseInt(tid),
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Success: alert the message from backend
+            alert(result.message);
+            // Reset the form
+            document.querySelector('.add-player-form').reset();
+        } else {
+            // Error: alert the message from backend
+            alert(result.message || "An error occurred while adding the player.");
+        }
+    } catch (error) {
+        alert("Failed to add player. Please try again.");
+    }
+}
 
 
 
@@ -415,7 +597,7 @@
     console.log(rankInfo.rank);
     console.log(rankInfo.max_experience);
     document.getElementById('rankName').textContent = rankInfo.rank;
-    
+    document.getElementById('prank').innerHTML = player;
     // If experience is available, display it; otherwise, show 0
     document.getElementById('experiencePoints').innerHTML = rankInfo.max_experience;
     
@@ -424,6 +606,31 @@
     alert('Failed to fetch player rank. Please try again later.');
   }
 }
+async function fetchLast5Matches() {
+            try {
+                const response = await fetch('http://localhost:3000/last5');
+                const matches = await response.json();
+
+                // Get the list container
+                const list = document.getElementById('matches-list');
+
+                // Clear any existing matches in the list
+                list.innerHTML = '';
+
+                // Iterate over the matches and create list items
+                matches.forEach(match => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('match-item');
+                    listItem.textContent = `Match ID: ${match.match_id},Duration: ${match.duration}, Winning Team ID: ${match.winning_team_id}, Losing Team ID: ${match.losing_team_id}`;
+                    list.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching last 5 matches:', error);
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = fetchLast5Matches;
 
 
 </script>
