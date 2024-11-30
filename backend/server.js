@@ -71,7 +71,7 @@ app.post('/api/match/start', async (req, res) => {
         assists: Math.floor(Math.random() * 10)
       };
     };
-
+    
     // Insert stats for each player in team 1
     for (const player of playersTeam1.rows) {
       const stats = generateStats();
@@ -96,6 +96,45 @@ app.post('/api/match/start', async (req, res) => {
   } catch (error) {
     console.error("Error starting match:", error);
     res.status(500).json({ message: "An error occurred while starting the match" });
+  }
+});
+
+app.get('/teamRegion', async (req, res) => {
+  const teamName = req.query.team;
+  try {
+    const result = await pool.query(
+      `SELECT region FROM team WHERE team_name = $1`,
+      [teamName]
+    );
+    if (result.rows.length >= 0) {
+      res.json({ region: result.rows[0].region });
+    } else {
+      res.status(404).json({ message: 'Team not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching team region:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the team region.' });
+  }
+});
+
+app.get('/get-kd-ratio', async (req, res) => {
+  const { playerName } = req.query; // Assuming playerName is passed as a query parameter
+  console.log(req.query);
+  if (!playerName) {
+      return res.status(400).send('Player name is required');
+  }
+
+  try {
+    console.log(playerName);
+      const result = await pool.query(
+          'SELECT CalculateKDRatio($1) AS kd_ratio', [playerName]
+      );
+      console.log(result.rows[0].kd_ratio);
+      res.json({ kd_ratio: result.rows[0].kd_ratio });
+  } catch (err) {
+      console.log("Error");
+      console.error(err);
+      res.status(500).send('Internal server error');
   }
 });
 

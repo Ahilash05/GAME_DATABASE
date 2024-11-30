@@ -12,9 +12,10 @@
       box-sizing: border-box;
     }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #1f1f1f;
+      font-family: 'Press Start 2P', cursive; /* Retro pixelated font */
+      background-color: #0e0e0e;
       color: #f0f0f0;
+      overflow-x: hidden;
     }
     /* Header with large buttons */
     .header {
@@ -22,7 +23,7 @@
       justify-content: space-around;
       align-items: center;
       background-color: #111;
-      border-bottom: 2px solid #333;
+      border-bottom: 3px solid #e94e77;
       height: 80px;
       position: fixed;
       width: 100%;
@@ -31,14 +32,20 @@
     }
     .tab {
       cursor: pointer;
-      padding: 20px 40px;
+      padding: 15px 35px;
       font-weight: bold;
-      font-size: 1.2em;
-      color: #888;
+      font-size: 1.5em;
+      color: #000000;
       transition: color 0.3s, background-color 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(to right, #e94e77, #d63e63);
+      box-shadow: 0 0 10px #e94e77, 0 0 15px #e94e77;
     }
     .tab:hover {
-      color: #f0f0f0;
+      color: #fff;
+      background-color: #333;
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff;
     }
     .tab.active {
       color: #fff;
@@ -54,7 +61,6 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       overflow: hidden;
       padding-top: 100px;
-      /* Offset for fixed header */
       margin: 0 auto;
     }
     /* Content Area */
@@ -63,6 +69,7 @@
       padding: 20px;
       background-color: #2d2d2d;
       color: #f0f0f0;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     }
     .content.active {
       display: block;
@@ -73,6 +80,33 @@
       justify-content: space-between;
       margin-bottom: 15px;
     }
+    .team-container button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #444;
+      color: #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1.1em;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    }
+    .team-container button:hover {
+      background-color: #555;
+      transform: scale(1.1);
+    }
+    .team-region {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #333;
+      color: #f0f0f0;
+      text-align: center;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    }
     .team-select select, .start-btn {
       width: 48%;
       padding: 10px;
@@ -80,16 +114,23 @@
       border-radius: 5px;
       background-color: #444;
       color: #f0f0f0;
+      font-size: 1.1em;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     }
     .start-btn {
+      margin-left: 175px;
       background-color: #e94e77;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1.2em;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
     }
     .start-btn:hover {
       background-color: #d63e63;
+      transform: scale(1.1);
     }
+  
     /* Stats tab styles */
     .stats-select {
       margin-bottom: 15px;
@@ -101,6 +142,8 @@
       border-radius: 5px;
       background-color: #444;
       color: #f0f0f0;
+      font-size: 1.1em;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
     }
     .stats-table {
       width: 100%;
@@ -112,9 +155,11 @@
       padding: 10px;
       text-align: center;
       color: #f0f0f0;
+      font-family: 'Press Start 2P', cursive;
     }
     .stats-table th {
       background-color: #333;
+      font-size: 1.2em;
     }
     /* Rank tab styles */
     .rank-info {
@@ -123,24 +168,65 @@
     }
     .rank-info h3 {
       color: #e94e77;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
     }
     .rank-info p {
       font-size: 1.2em;
       margin: 10px 0;
     }
-    #showrankbtn{
+    #showrankbtn {
       background-color: #e94e77;
-      color:whitesmoke;
-      font-weight: bolder;
+      color: whitesmoke;
       font-weight: bold;
       font-size: larger;
       padding: 10px;
       border-radius: 70px;
+      box-shadow: 0 0 10px #e94e77, 0 0 15px #e94e77;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
     }
-    #btncontainer{
+    #showrankbtn:hover {
+      background-color: #d63e63;
+      transform: scale(1.1);
+    }
+    #btncontainer {
       text-align: center;
     }
+    #displayKD {
+      padding: 20px;
+    }
+    .retro-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+      background: #ff4d4d;
+      border: 3px solid #ffcc00;
+      border-radius: 8px;
+      box-shadow: 0 4px 0 #cc3300, 0 8px 0 #cc3300, 0 12px 0 #cc3300;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease-in-out;
+      font-family: 'Press Start 2P', cursive;
+    }
+  
+    /* Hover and active effects */
+    .retro-button:hover {
+      background-color: #ff6666;
+      box-shadow: 0 4px 0 #cc3300, 0 8px 0 #cc3300, 0 12px 0 #cc3300;
+      transform: translateY(-4px);
+    }
+  
+    .retro-button:active {
+      background-color: #ff4d4d;
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #cc3300, 0 4px 0 #cc3300, 0 6px 0 #cc3300;
+    }
   </style>
+  
 </head>
 <body>
 
@@ -156,22 +242,32 @@
   <div id="play" class="content active">
     <h2>Select Teams</h2>
     <div class="team-select">
-      <select id="team1">
-        <option value="" disabled selected>Select Team 1</option>
-        <option value="Team A">Team A</option>
-        <option value="Team B">Team B</option>
-        <option value="Team C">Team C</option>
-        <option value="Team D">Team D</option>
-      </select>
-      <select id="team2">
-        <option value="" disabled selected>Select Team 2</option>
-        <option value="Team A">Team A</option>
-        <option value="Team B">Team B</option>
-        <option value="Team C">Team C</option>
-        <option value="Team D">Team D</option>
-      </select>
+      <div class="team-container">
+        <select id="team1">
+          <option value="" disabled selected>Select Team 1</option>
+          <option value="Team A">Team A</option>
+          <option value="Team B">Team B</option>
+          <option value="Team C">Team C</option>
+          <option value="Team D">Team D</option>
+        </select>
+        <button onclick="showTeamRegion('team1')">Show Team 1 Region</button>
+        <div id="team1Region" class="team-region">Region: -</div>
+      </div>
+
+      <div class="team-container">
+        <select id="team2">
+          <option value="" disabled selected>Select Team 2</option>
+          <option value="Team A">Team A</option>
+          <option value="Team B">Team B</option>
+          <option value="Team C">Team C</option>
+          <option value="Team D">Team D</option>
+        </select>
+        <button onclick="showTeamRegion('team2')">Show Team 2 Region</button>
+        <div id="team2Region" class="team-region">Region: -</div>
+      </div>
     </div>
-    <button class="start-btn" onclick="startMatch()">Start Match</button>
+   
+    <button class="retro-button" style="margin-left:35%" onclick="startMatch()">Start Match</button>
   </div>
 
   <!-- Stats Content -->
@@ -186,6 +282,13 @@
         <option value="Player 4">Player 4</option>
         <option value="Player 5">Player 5</option>
       </select>
+     
+    </div>
+    <div id="btncontainer">
+      <button onclick="getKDRatio(document.getElementById('playerSelect').value)" class="retro-button">Show KD</button>
+      <div id="displayKD">
+        KD - <span id="dispkd">NIL</span>
+      </div>
     </div>
     <table class="stats-table">
       <thead>
@@ -249,6 +352,35 @@
       alert("Please select two different teams.");
     }
   }
+  async function showTeamRegion(teamSelectId) {
+    const team = document.getElementById(teamSelectId).value;
+    if (!team) {
+      alert("Please select a team");
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:3000/teamRegion?team=${team}`);
+      const data = await response.json();
+      document.getElementById(`${teamSelectId}Region`).textContent = `Region: ${data.region}`;
+    } catch (error) {
+      console.error('Error fetching team region:', error);
+    }
+  }
+  async function getKDRatio(playerName) {
+    const response = await fetch(`http://localhost:3000/get-kd-ratio?playerName=${playerName}`);
+    if (response.ok) {
+        const data = await response.json();
+        
+        const kd = data.kd_ratio;
+        document.getElementById('dispkd').textContent = kd;
+    } else {
+        alert('Error fetching K/D ratio');
+    }
+}
+  
+
+
+
 
   async function showPlayerStats() {
     const player = document.getElementById('playerSelect').value;
